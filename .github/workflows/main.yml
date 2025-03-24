@@ -50,11 +50,16 @@ jobs:
 
       - name: prepare virtual hosts
         run: |
-          cp -R apps /var/www/apps
+          sudo cp -R apps /var/www/apps
+          sudo chown -R www-data:www-data /var/www/apps
+          sudo chmod o+w /var/www/apps
+
           sudo cp conf/host1.localhost.conf /etc/apache2/sites-available/host1.localhost.conf
           sudo cp conf/host2.localhost.conf /etc/apache2/sites-available/host2.localhost.conf
+
           sudo a2ensite host1.localhost.conf
           sudo a2ensite host2.localhost.conf
+
           sudo systemctl reload apache2
 
       - name: Run Linux installer
@@ -68,9 +73,7 @@ jobs:
       - name: Prepare web roots
         run: |
 
-          sudo ls -l /var/www/html
-          sudo chown -R www-data:www-data /var/www/apps
-          sudo chmod o+w /var/www/apps
+          sudo ls -lR /var/www/apps
           sudo usermod -a -G www-data lucee
       - name: Run tests
         run: |
