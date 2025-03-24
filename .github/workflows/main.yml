@@ -81,7 +81,7 @@ jobs:
           echo "## First check each host is working" >> $GITHUB_STEP_SUMMARY
           #echo "### http://host1.localhost/robots.txt" >> $GITHUB_STEP_SUMMARY
           #curl http://host1.localhost/robots.txt --fail-with-body >> $GITHUB_STEP_SUMMARY
-          
+
           #echo "### http://host1.localhost/robots.txt" >> $GITHUB_STEP_SUMMARY
           #curl http://host2.localhost/robots.txt --fail-with-body >> $GITHUB_STEP_SUMMARY
 
@@ -116,5 +116,19 @@ jobs:
       - name: Apache logs
         if: ${{ always() }}
         run: |
+            echo "----- error.log"
             sudo -s cat /var/log/apache2/error.log
+
+            echo "----- host1-access.log"
+            sudo [ -r /var/log/apache2/host1-access.log ] && sudo cat /var/log/apache2/host1-access.log
+
+            echo "----- host1-error.log"
+            sudo [ -r /var/log/apache2/host1-error.log ] && sudo cat /var/log/apache2/host1-error.log
+
+            echo "----- host2-access.log"
+            sudo [ -r /var/log/apache2/host2-access.log ] && sudo cat /var/log/apache2/host2-access.log
+
+            echo "----- host2-error.log"
+            sudo [ -r /var/log/apache2/host2-error.log ] && sudo cat /var/log/apache2/host2-error.log
+
             sudo -s ls -l /var/log/apache2/
