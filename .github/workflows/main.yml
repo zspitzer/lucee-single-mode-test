@@ -79,6 +79,7 @@ jobs:
         run: |
           sudo systemctl reload apache2
           sudo /opt/lucee/lucee_ctl restart
+          sleep 5;
 
       - name: Run tests
         run: |
