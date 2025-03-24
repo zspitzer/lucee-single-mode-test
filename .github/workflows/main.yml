@@ -18,7 +18,7 @@ jobs:
     - name: Cache Lucee Installer packages
       uses: actions/cache@v4
       with:
-        path: ~/*.run
+        path: lucee-${{ env.LUCEE_INSTALLER_VERSION }}-linux-x64-installer.run
         key: lucee-installer-cache
     - name: Download Lucee Jar
       run: |
