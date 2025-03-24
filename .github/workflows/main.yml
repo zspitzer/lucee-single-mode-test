@@ -1,0 +1,115 @@
+name: Lucee single mode tests
+
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  push:
+  workflow_dispatch:
+    inputs:
+      LUCEE_VERSION:
+        required: true
+        type: string
+
+env:
+  LUCEE_INSTALLER_VERSION: 6.2.1.77-RC
+jobs:
+  download-installer:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Cache Lucee Installer packages
+      uses: actions/cache@v4
+      with:
+        path: ~/*.run
+        key: lucee-installer-cache
+    - name: Download Lucee Jar
+      run: |
+        if [ ! -f "lucee-${{ env.LUCEE_INSTALLER_VERSION }}-linux-x64-installer.run" ]; then
+          curl --fail https://cdn.lucee.org/lucee-${{ env.LUCEE_INSTALLER_VERSION }}-RC-linux-x64-installer.run -o lucee-${{ env.LUCEE_INSTALLER_VERSION }}-linux-x64-installer.run -s
+        fi
+        ls -lH *.run
+
+  test-ubuntu-linux-x64:
+    runs-on: ubuntu-latest
+    needs: download-installer
+    steps:
+      - uses: actions/checkout@v4.1.1
+      - name: Download Linux Installer artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: lucee-installer-cache
+      - name: Update and install Apache
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y apache2
+
+      - name: Start Apache service
+        run: |
+          sudo systemctl start apache2
+          sudo systemctl enable apache2
+
+      - name: Verify Apache is running
+        run: |
+          sudo systemctl status apache2
+
+      - name: list dir
+        run: |
+          ls -l
+
+      - name: prepare virtual hosts
+        run: |
+          cp -R apps /var/www/apps
+          sudo cp conf/host1.localhost.conf /etc/apache2/sites-available/host1.localhost.conf
+          sudo cp conf/host2.localhost.conf /etc/apache2/sites-available/host2.localhost.conf
+          sudo a2ensite host1.localhost.conf
+          sudo a2ensite host2.localhost.conf
+          sudo systemctl reload apache2
+
+      - name: Run Linux installer
+        run: |
+          ls -l
+          chmod +x lucee-${{ env.LUCEE_INSTALLER_VERSION }}-linux-x64-installer.run
+          sudo ./lucee-${{ env.LUCEE_INSTALLER_VERSION }}-linux-x64-installer.run \
+            --mode unattended --installconn true --installmodcfml true --installiis false --startatboot false \
+            --luceepass ibtest --systemuser lucee --installjre true
+          sleep 10;
+      - name: Prepare web roots
+        run: |
+       
+          sudo ls -l /var/www/html
+          sudo chown -R www-data:www-data /var/www/apps
+          sudo chmod o+w /var/www/apps
+          sudo usermod -a -G www-data lucee
+      - name: Run tests
+        run: |
+          echo "First check each host is working"
+          echo "--- host1"
+          curl http://host1.localhost/robots.txt --fail-with-body >> $GITHUB_STEP_SUMMARY
+          echo "--- host2"
+          curl http://host2.localhost/robots.txt --fail-with-body >> $GITHUB_STEP_SUMMARY
+
+          echo "Now test if each host has it's own config and loads the correct models"
+          echo "--- host1"
+          curl http://host1.localhost/index.cfm --fail-with-body >> $GITHUB_STEP_SUMMARY
+          echo "--- host2"
+          curl http://host2.localhost/index.cfm --fail-with-body >> $GITHUB_STEP_SUMMARY
+
+      - name: debug failure
+        if: ${{ always() }}
+        run: |
+            ls -l /tmp
+            cd /tmp
+            echo "----- installbuilder_installer.log"
+            sudo -s cat installbuilder_installer.log
+            cd /opt/lucee
+            echo "------ ls -lR /opt/lucee"
+            sudo ls -lR
+            echo "----- install.log"
+            sudo [ -r install.log ] && sudo -s cat install.log
+            sudo ls -l /opt/lucee/tomcat/logs/
+            echo "----- catalina.out"
+            sudo [ -r /opt/lucee/tomcat/logs/catalina.out ] && sudo cat /opt/lucee/tomcat/logs/catalina.out
+
+            sudo -s cat /var/log/apache2/error.log
+
+            #cat /opt/lucee/tomcat/lucee-server/context/logs/out.log
+            #cat /opt/lucee/tomcat/lucee-server/context/logs/err.log
+            #cat /opt/lucee/tomcat/logs/catalina.out
