@@ -30,15 +30,6 @@ jobs:
           fi
           ls -lH *.run
 
-      - name: Run Lucee Linux installer
-        run: |
-          ls -l
-          chmod +x lucee-${{ env.LUCEE_INSTALLER_VERSION }}-linux-x64-installer.run
-          sudo ./lucee-${{ env.LUCEE_INSTALLER_VERSION }}-linux-x64-installer.run \
-            --mode unattended --installconn true --installmodcfml true --installiis false --startatboot false \
-            --luceepass ibtest --systemuser lucee --installjre true
-          sleep 5;
- 
       - name: Update and install Apache
         run: |
           sudo apt-get update
@@ -70,6 +61,15 @@ jobs:
           sudo a2ensite host2.localhost.conf
 
           sudo systemctl reload apache2
+
+      - name: Run Lucee Linux installer
+        run: |
+          ls -l
+          chmod +x lucee-${{ env.LUCEE_INSTALLER_VERSION }}-linux-x64-installer.run
+          sudo ./lucee-${{ env.LUCEE_INSTALLER_VERSION }}-linux-x64-installer.run \
+            --mode unattended --installconn true --installmodcfml true --installiis false --startatboot false \
+            --luceepass ibtest --systemuser lucee --installjre true
+          sleep 5;
 
       - name: Prepare web roots
         run: |
