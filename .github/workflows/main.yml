@@ -69,6 +69,7 @@ jobs:
           sudo ./lucee-${{ env.LUCEE_INSTALLER_VERSION }}-linux-x64-installer.run \
             --mode unattended --installconn true --installmodcfml true --installiis false --startatboot false \
             --luceepass ibtest --systemuser lucee --installjre true
+          echo "Sleeping for 5s"
           sleep 5;
           echo "Write out simple test script to confirm Lucee / Java / Tomcat versions"
 
@@ -89,22 +90,38 @@ jobs:
 
       - name: Run tests
         run: |
-          echo "Sanity Check Tomcat port 8888" | tee -a $GITHUB_STEP_SUMMARY
+          echo "Sanity Check Tomcat port 8888 (post restart)" | tee -a $GITHUB_STEP_SUMMARY
           curl http://127.0.0.1:8888/check.cfm?version=${{ env.LUCEE_INSTALLER_VERSION }} --fail-with-body >> $GITHUB_STEP_SUMMARY
 
           echo "## First check each host is working" | tee -a $GITHUB_STEP_SUMMARY
-          echo "### http://host1.localhost/robots.txt" | tee -a $GITHUB_STEP_SUMMARY
-          curl http://host1.localhost/robots.txt --fail-with-body | tee -a $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
 
           echo "### http://host1.localhost/robots.txt" | tee -a $GITHUB_STEP_SUMMARY
+          echo "```" >> $GITHUB_STEP_SUMMARY
+          curl http://host1.localhost/robots.txt --fail-with-body | tee -a $GITHUB_STEP_SUMMARY
+          echo "```" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          echo "### http://host2.localhost/robots.txt" | tee -a $GITHUB_STEP_SUMMARY
+          echo "```" >> $GITHUB_STEP_SUMMARY
           curl http://host2.localhost/robots.txt --fail-with-body | tee -a $GITHUB_STEP_SUMMARY
+          echo "```" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
 
           echo "## Now test if each host has it's own config and loads the correct models" | tee -a $GITHUB_STEP_SUMMARY
-          echo "### http://host1.localhost/index.cfm" | tee -a $GITHUB_STEP_SUMMARY
-          curl -L --max-redirs 5 --retry-delay 5 http://host1.localhost/index.cfm --fail-with-body | tee -a $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
 
           echo "### http://host1.localhost/index.cfm" | tee -a $GITHUB_STEP_SUMMARY
+          echo "```" >> $GITHUB_STEP_SUMMARY
+          curl -L --max-redirs 5 --retry-delay 5 http://host1.localhost/index.cfm --fail-with-body | tee -a $GITHUB_STEP_SUMMARY
+          echo "```" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          echo "### http://host2.localhost/index.cfm" | tee -a $GITHUB_STEP_SUMMARY
+          echo "```" >> $GITHUB_STEP_SUMMARY
           curl -L --max-redirs 5 --retry-delay 5 http://host2.localhost/index.cfm --fail-with-body | tee -a $GITHUB_STEP_SUMMARY
+          echo "```" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
 
       - name: Lucee Install logs
         if: ${{ always() }}
