@@ -12,30 +12,24 @@ on:
 env:
   LUCEE_INSTALLER_VERSION: 6.2.1.77-RC
 jobs:
-  download-installer:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Cache Lucee Installer packages
-      uses: actions/cache@v4
-      with:
-        path: lucee-${{ env.LUCEE_INSTALLER_VERSION }}-linux-x64-installer.run
-        key: lucee-installer-cache
-    - name: Download Lucee Jar
-      run: |
-        if [ ! -f "lucee-${{ env.LUCEE_INSTALLER_VERSION }}-linux-x64-installer.run" ]; then
-          curl --fail https://cdn.lucee.org/lucee-${{ env.LUCEE_INSTALLER_VERSION }}-linux-x64-installer.run -o lucee-${{ env.LUCEE_INSTALLER_VERSION }}-linux-x64-installer.run -s
-        fi
-        ls -lH *.run
-
   test-ubuntu-linux-x64:
     runs-on: ubuntu-latest
-    needs: download-installer
     steps:
       - uses: actions/checkout@v4.1.1
-      - name: Download Linux Installer artifact
-        uses: actions/download-artifact@v4
+
+      - name: Cache Lucee Installer packages
+        uses: actions/cache@v4
         with:
-          name: lucee-installer-cache
+          path: lucee-${{ env.LUCEE_INSTALLER_VERSION }}-linux-x64-installer.run
+          key: lucee-installer-cache
+
+      - name: Download Lucee Jar
+        run: |
+          if [ ! -f "lucee-${{ env.LUCEE_INSTALLER_VERSION }}-linux-x64-installer.run" ]; then
+            curl --fail https://cdn.lucee.org/lucee-${{ env.LUCEE_INSTALLER_VERSION }}-linux-x64-installer.run -o lucee-${{ env.LUCEE_INSTALLER_VERSION }}-linux-x64-installer.run -s
+          fi
+          ls -lH *.run
+
       - name: Update and install Apache
         run: |
           sudo apt-get update
@@ -73,7 +67,7 @@ jobs:
           sleep 10;
       - name: Prepare web roots
         run: |
-       
+
           sudo ls -l /var/www/html
           sudo chown -R www-data:www-data /var/www/apps
           sudo chmod o+w /var/www/apps
