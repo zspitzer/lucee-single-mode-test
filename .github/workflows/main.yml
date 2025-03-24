@@ -30,6 +30,15 @@ jobs:
           fi
           ls -lH *.run
 
+      - name: Run Lucee Linux installer
+        run: |
+          ls -l
+          chmod +x lucee-${{ env.LUCEE_INSTALLER_VERSION }}-linux-x64-installer.run
+          sudo ./lucee-${{ env.LUCEE_INSTALLER_VERSION }}-linux-x64-installer.run \
+            --mode unattended --installconn true --installmodcfml true --installiis false --startatboot false \
+            --luceepass ibtest --systemuser lucee --installjre true
+          sleep 5;
+ 
       - name: Update and install Apache
         run: |
           sudo apt-get update
@@ -62,35 +71,30 @@ jobs:
 
           sudo systemctl reload apache2
 
-      - name: Run Linux installer
-        run: |
-          ls -l
-          chmod +x lucee-${{ env.LUCEE_INSTALLER_VERSION }}-linux-x64-installer.run
-          sudo ./lucee-${{ env.LUCEE_INSTALLER_VERSION }}-linux-x64-installer.run \
-            --mode unattended --installconn true --installmodcfml true --installiis false --startatboot false \
-            --luceepass ibtest --systemuser lucee --installjre true
-          sleep 5;
-
       - name: Prepare web roots
         run: |
           sudo usermod -a -G www-data lucee
           sudo ls -lR /var/www/apps
+      - name: Restart
+        run: |
+          sudo systemctl reload apache2
+          sudo /opt/lucee/lucee_ctl restart
 
       - name: Run tests
         run: |
-          echo "## First check each host is working" >> $GITHUB_STEP_SUMMARY
-          #echo "### http://host1.localhost/robots.txt" >> $GITHUB_STEP_SUMMARY
-          #curl http://host1.localhost/robots.txt --fail-with-body >> $GITHUB_STEP_SUMMARY
+          echo "## First check each host is working" | tee -a $GITHUB_STEP_SUMMARY
+          #echo "### http://host1.localhost/robots.txt" | tee -a $GITHUB_STEP_SUMMARY
+          #curl http://host1.localhost/robots.txt --fail-with-body | tee -a $GITHUB_STEP_SUMMARY
 
-          #echo "### http://host1.localhost/robots.txt" >> $GITHUB_STEP_SUMMARY
-          #curl http://host2.localhost/robots.txt --fail-with-body >> $GITHUB_STEP_SUMMARY
+          #echo "### http://host1.localhost/robots.txt" | tee -a $GITHUB_STEP_SUMMARY
+          #curl http://host2.localhost/robots.txt --fail-with-body | tee -a $GITHUB_STEP_SUMMARY
 
-          echo "## Now test if each host has it's own config and loads the correct models" >> $GITHUB_STEP_SUMMARY
-          echo "### http://host1.localhost/index.cfm" >> $GITHUB_STEP_SUMMARY
-          curl -L --max-redirs 5 http://host1.localhost/index.cfm --fail-with-body >> $GITHUB_STEP_SUMMARY
+          echo "## Now test if each host has it's own config and loads the correct models" | tee -a $GITHUB_STEP_SUMMARY
+          echo "### http://host1.localhost/index.cfm" | tee -a $GITHUB_STEP_SUMMARY
+          curl -L --max-redirs 5 http://host1.localhost/index.cfm --fail-with-body | tee -a $GITHUB_STEP_SUMMARY
 
-          echo "### http://host1.localhost/index.cfm" >> $GITHUB_STEP_SUMMARY
-          curl -L --max-redirs 5 http://host2.localhost/index.cfm --fail-with-body >> $GITHUB_STEP_SUMMARY
+          echo "### http://host1.localhost/index.cfm" | tee -a $GITHUB_STEP_SUMMARY
+          curl -L --max-redirs 5 http://host2.localhost/index.cfm --fail-with-body | tee -a $GITHUB_STEP_SUMMARY
 
       - name: Lucee Install logs
         if: ${{ always() }}
