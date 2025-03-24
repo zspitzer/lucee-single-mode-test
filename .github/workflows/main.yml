@@ -23,7 +23,7 @@ jobs:
     - name: Download Lucee Jar
       run: |
         if [ ! -f "lucee-${{ env.LUCEE_INSTALLER_VERSION }}-linux-x64-installer.run" ]; then
-          curl --fail https://cdn.lucee.org/lucee-${{ env.LUCEE_INSTALLER_VERSION }}-RC-linux-x64-installer.run -o lucee-${{ env.LUCEE_INSTALLER_VERSION }}-linux-x64-installer.run -s
+          curl --fail https://cdn.lucee.org/lucee-${{ env.LUCEE_INSTALLER_VERSION }}-linux-x64-installer.run -o lucee-${{ env.LUCEE_INSTALLER_VERSION }}-linux-x64-installer.run -s
         fi
         ls -lH *.run
 
