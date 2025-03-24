@@ -97,30 +97,26 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
 
           echo "### http://host1.localhost/robots.txt" | tee -a $GITHUB_STEP_SUMMARY
-          echo "```" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
           curl http://host1.localhost/robots.txt --fail-with-body | tee -a $GITHUB_STEP_SUMMARY
-          echo "```" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
           echo "### http://host2.localhost/robots.txt" | tee -a $GITHUB_STEP_SUMMARY
-          echo "```" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
           curl http://host2.localhost/robots.txt --fail-with-body | tee -a $GITHUB_STEP_SUMMARY
-          echo "```" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
           echo "## Now test if each host has it's own config and loads the correct models" | tee -a $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
           echo "### http://host1.localhost/index.cfm" | tee -a $GITHUB_STEP_SUMMARY
-          echo "```" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
           curl -L --max-redirs 5 --retry-delay 5 http://host1.localhost/index.cfm --fail-with-body | tee -a $GITHUB_STEP_SUMMARY
-          echo "```" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
           echo "### http://host2.localhost/index.cfm" | tee -a $GITHUB_STEP_SUMMARY
-          echo "```" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
           curl -L --max-redirs 5 --retry-delay 5 http://host2.localhost/index.cfm --fail-with-body | tee -a $GITHUB_STEP_SUMMARY
-          echo "```" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
       - name: Lucee Install logs
