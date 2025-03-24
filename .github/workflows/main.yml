@@ -77,17 +77,19 @@ jobs:
           sudo usermod -a -G www-data lucee
       - name: Run tests
         run: |
-          echo "First check each host is working"
-          echo "--- host1"
-          curl http://host1.localhost/robots.txt --fail-with-body >> $GITHUB_STEP_SUMMARY
-          echo "--- host2"
-          curl http://host2.localhost/robots.txt --fail-with-body >> $GITHUB_STEP_SUMMARY
+          echo "## First check each host is working" >> $GITHUB_STEP_SUMMARY
+          #echo "### http://host1.localhost/robots.txt" >> $GITHUB_STEP_SUMMARY
+          #curl http://host1.localhost/robots.txt --fail-with-body >> $GITHUB_STEP_SUMMARY
+          
+          #echo "### http://host1.localhost/robots.txt" >> $GITHUB_STEP_SUMMARY
+          #curl http://host2.localhost/robots.txt --fail-with-body >> $GITHUB_STEP_SUMMARY
 
-          echo "Now test if each host has it's own config and loads the correct models"
-          echo "--- host1"
-          curl http://host1.localhost/index.cfm --fail-with-body >> $GITHUB_STEP_SUMMARY
-          echo "--- host2"
-          curl http://host2.localhost/index.cfm --fail-with-body >> $GITHUB_STEP_SUMMARY
+          echo "## Now test if each host has it's own config and loads the correct models" >> $GITHUB_STEP_SUMMARY
+          echo "### http://host1.localhost/index.cfm" >> $GITHUB_STEP_SUMMARY
+          curl -L --max-redirs 5 http://host1.localhost/index.cfm --fail-with-body >> $GITHUB_STEP_SUMMARY
+
+          echo "### http://host1.localhost/index.cfm" >> $GITHUB_STEP_SUMMARY
+          curl -L --max-redirs 5 http://host2.localhost/index.cfm --fail-with-body >> $GITHUB_STEP_SUMMARY
 
       - name: debug failure
         if: ${{ always() }}
