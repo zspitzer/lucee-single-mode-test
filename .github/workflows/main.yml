@@ -143,7 +143,7 @@ jobs:
       - name: List cfclasses
         if: ${{ always() }}
         run: |
-            sudo ls -l /opt/lucee/tomcat/lucee-server/context/cfclasses/
+            sudo ls -lR /opt/lucee/tomcat/lucee-server/context/cfclasses/
 
       - name: Apache logs
         if: ${{ always() }}
