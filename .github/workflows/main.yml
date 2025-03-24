@@ -69,12 +69,13 @@ jobs:
           sudo ./lucee-${{ env.LUCEE_INSTALLER_VERSION }}-linux-x64-installer.run \
             --mode unattended --installconn true --installmodcfml true --installiis false --startatboot false \
             --luceepass ibtest --systemuser lucee --installjre true
-          sleep 10;
+          sleep 5;
+
       - name: Prepare web roots
         run: |
-
-          sudo ls -lR /var/www/apps
           sudo usermod -a -G www-data lucee
+          sudo ls -lR /var/www/apps
+
       - name: Run tests
         run: |
           echo "## First check each host is working" >> $GITHUB_STEP_SUMMARY
@@ -91,7 +92,7 @@ jobs:
           echo "### http://host1.localhost/index.cfm" >> $GITHUB_STEP_SUMMARY
           curl -L --max-redirs 5 http://host2.localhost/index.cfm --fail-with-body >> $GITHUB_STEP_SUMMARY
 
-      - name: debug failure
+      - name: Lucee Install logs
         if: ${{ always() }}
         run: |
             ls -l /tmp
@@ -103,12 +104,17 @@ jobs:
             sudo ls -lR
             echo "----- install.log"
             sudo [ -r install.log ] && sudo -s cat install.log
+
+      - name: Tomcat / Lucee logs
+        if: ${{ always() }}
+        run: |
             sudo ls -l /opt/lucee/tomcat/logs/
             echo "----- catalina.out"
             sudo [ -r /opt/lucee/tomcat/logs/catalina.out ] && sudo cat /opt/lucee/tomcat/logs/catalina.out
+            cat /opt/lucee/tomcat/lucee-server/context/logs/out.log
 
+      - name: Apache logs
+        if: ${{ always() }}
+        run: |
             sudo -s cat /var/log/apache2/error.log
-
-            #cat /opt/lucee/tomcat/lucee-server/context/logs/out.log
-            #cat /opt/lucee/tomcat/lucee-server/context/logs/err.log
-            #cat /opt/lucee/tomcat/logs/catalina.out
+            sudo -s ls -l /var/log/apache2/
