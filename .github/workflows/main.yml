@@ -52,7 +52,7 @@ jobs:
         run: |
           sudo cp -R apps /var/www/apps
           sudo chown -R www-data:www-data /var/www/apps
-          sudo chmod o+w /var/www/apps
+          sudo chmod g+w,o+w /var/www/apps
 
           sudo cp conf/host1.localhost.conf /etc/apache2/sites-available/host1.localhost.conf
           sudo cp conf/host2.localhost.conf /etc/apache2/sites-available/host2.localhost.conf
