@@ -13,4 +13,16 @@
         systemOutput(i, true);
         echo(serializeJson(i)  & "<br>");
     }
+
+    systemOutput("", true);
+    echo("<hr>");
+    systemOutput("#### componentCacheList()", true);
+    echo("---componentCacheList()");
+
+    componentCache = componentCacheList();
+    loop collection="#componentCache#" key="k" value="v" {
+        systemOutput("#k#: #v# <br>", true);
+        echo("#k#: #v# <br>");
+    }
+
 </cfscript>
