@@ -17,7 +17,7 @@
     systemOutput("", true);
     echo("<hr>");
     systemOutput("#### componentCacheList()", true);
-    echo("---componentCacheList()<br>");
+    echo("#### componentCacheList()");
 
     componentCache = componentCacheList();
     loop collection="#componentCache#" key="k" value="v" {
