@@ -20,9 +20,8 @@
     logger(getApplicationSettings().mappings);
     logger(" " );
 
-
     // via application.cfc mapping
-    logger("--new regular.regularMapping" );
+    logger("--new regular.regularMapping()" );
     logger(new regular.regularMapping().hello());
 
     logger("--createObject(regular.regularMapping)" );
@@ -31,18 +30,20 @@
     logger("--createObject(/regular/regularMapping)" );
     logger(createObject("/regular/regularMapping").hello());
 
+    logger(" " );
     // via implicit root mapping
-    logger("--new " );
+    logger("--new baseMapping.baseMapping()" );
     logger(new baseMapping.baseMapping().hello());
 
-    logger("--createObject()" );
+    logger("--createObject(baseMapping.baseMapping)" );
     logger(createObject("baseMapping.baseMapping").hello());
 
     logger("--createObject(/baseMapping/baseMapping)" );
     logger(createObject("/baseMapping/baseMapping").hello());
 
+    logger(" " );
     // via componentPaths
-    logger("--new componentMapping" );
+    logger("--new componentMapping()" );
     logger(new componentMapping().hello());
 
     logger("--createObject(componentMapping)" );
