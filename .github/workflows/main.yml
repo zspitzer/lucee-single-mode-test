@@ -79,11 +79,11 @@ jobs:
           sudo ls -lR /var/www/apps
 
       - name: Restart Lucee
-        env:
-          LUCEE_LOGGING_FORCE_LEVEL: trace
         run: |
           sudo systemctl reload apache2
-          sudo /opt/lucee/lucee_ctl restart
+          sudo /opt/lucee/lucee_ctl stop
+          cp conf/.CFConfig.json /opt/lucee/tomcat/lucee-server/deploy/.CFConfig.json
+          sudo /opt/lucee/lucee_ctl start
 
       - name: Run tests
         run: |
@@ -122,8 +122,6 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
 
       - name: Restart Lucee
-        env:
-            LUCEE_LOGGING_FORCE_LEVEL: trace
         run: |
           sudo systemctl reload apache2
           sudo /opt/lucee/lucee_ctl restart
