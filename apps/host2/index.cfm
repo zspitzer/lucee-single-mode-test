@@ -3,7 +3,9 @@
     function logger( mess ){
         ArrayAppend( info, mess );
         if ( isSimpleValue(mess) ) {
-            WriteLog( text=mess, type="INFO", log="application" );
+            WriteLog( text=mess, type="INFO", log="application" )
+            if ( mess contains "one" )
+                throw "CFC from one on host2";
         } else {
             for (var m in mess) {
                 WriteLog( text=m.toJson(), type="INFO", log="application" );

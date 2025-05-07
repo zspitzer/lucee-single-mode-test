@@ -3,6 +3,8 @@
         ArrayAppend( info, mess );
         if ( isSimpleValue(mess) ) {
             WriteLog( text=mess, type="INFO", log="application" );
+            if ( mess contains "two" )
+                throw "CFC from two on host1";
         } else {
             for (var m in mess) {
                 WriteLog( text=m.toJson(), type="INFO", log="application" );
