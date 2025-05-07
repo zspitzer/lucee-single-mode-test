@@ -36,11 +36,11 @@
     logger("--createObject(/mapModel/test)" );
     logger(createObject("/mapModel/test").hello());
 
-    logger("--new host2");
-    logger(new host2().hello());
+    logger("--new host1");
+    logger(new host1().hello());
 
-    logger("--createObject(host2)" );
-    logger(createObject("host2").hello());
+    logger("--createObject(host1)" );
+    logger(createObject("host1").hello());
 
     //logger("--createObject(/componentMapping/test)" );
     //logger(createObject("/componentMapping/test").hello());
