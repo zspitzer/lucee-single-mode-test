@@ -86,6 +86,7 @@ jobs:
           sudo curl --fail https://cdn.lucee.org/${{ env.LUCEE_CORE }}.lco -o /opt/lucee/tomcat/lucee-server/deploy/${{ env.LUCEE_CORE }}.lco -s
           cp conf/.CFConfig.json /opt/lucee/tomcat/lucee-server/deploy/.CFConfig.json
           sudo /opt/lucee/lucee_ctl start
+          sleep 3
 
       - name: Run tests
         run: |
@@ -164,17 +165,6 @@ jobs:
       - name: Tomcat / Lucee logs
         if: ${{ always() }}
         run: |
-            sudo ls -l /opt/lucee/tomcat/logs/
-            echo ""
-            echo ""
-            echo "----- catalina.out"
-            sudo [ -r /opt/lucee/tomcat/logs/catalina.out ] && sudo cat /opt/lucee/tomcat/logs/catalina.out
-
-            echo ""
-            echo ""
-            echo "----- out.log"
-            cat /opt/lucee/tomcat/lucee-server/context/logs/out.log
-
             echo ""
             echo ""
             echo "----- deploy.log"
@@ -190,6 +180,17 @@ jobs:
             echo "----- application.log"
             cat /opt/lucee/tomcat/lucee-server/context/logs/application.log
 
+            sudo ls -l /opt/lucee/tomcat/logs/
+            echo ""
+            echo ""
+            echo "----- catalina.out"
+            sudo [ -r /opt/lucee/tomcat/logs/catalina.out ] && sudo cat /opt/lucee/tomcat/logs/catalina.out
+
+            echo ""
+            echo ""
+            echo "----- out.log"
+            cat /opt/lucee/tomcat/lucee-server/context/logs/out.log
+
       - name: List cfclasses
         if: ${{ always() }}
         run: |
@@ -198,6 +199,8 @@ jobs:
       - name: Apache logs
         if: ${{ always() }}
         run: |
+            sudo -s ls -l /var/log/apache2/
+
             echo "----- error.log"
             sudo -s cat /var/log/apache2/error.log
 
@@ -213,4 +216,4 @@ jobs:
             echo "----- host2-error.log"
             sudo [ -r /var/log/apache2/host2-error.log ] && sudo cat /var/log/apache2/host2-error.log
 
-            sudo -s ls -l /var/log/apache2/
+
