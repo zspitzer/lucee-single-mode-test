@@ -50,14 +50,14 @@
         systemOutput(i, true);
         if ( isSimpleValue(i) ){
             if ( i contains "testtwo" )
-                echo(":x: #i#<br>#chr(10)#");
+                echo(":x: #i##chr(10)#");
             else 
-                echo("#i#<br>#chr(10)#");
+                echo("#i##chr(10)#");
         } else {
             if ( serializeJson(i) contains "testtwo" )
-                echo(":x: #serializeJson(i)#<br>#chr(10)#");
+                echo(":x: #serializeJson(i)##chr(10)#");
             else 
-                echo("#serializeJson(i)#<br>#chr(10)#");
+                echo("#serializeJson(i)##chr(10)#");
         }
     }
 
