@@ -97,7 +97,7 @@ jobs:
           sudo /opt/lucee/lucee_ctl stop
           # replace loader jar, allows testing 6 and 7
           sudo rm /opt/lucee/lib/lucee-${{ env.LUCEE_INSTALLER_VERSION }}.jar
-          sudo cp ${{ env.LUCEE_CORE }}.lco /opt/lucee/lib/lucee-${{ env.LUCEE_CORE }}.jar
+          sudo cp lucee-${{ env.LUCEE_CORE }}.jar /opt/lucee/lib/lucee-${{ env.LUCEE_CORE }}.jar
           cp conf/.CFConfig.json /opt/lucee/tomcat/lucee-server/deploy/.CFConfig.json
           sudo /opt/lucee/lucee_ctl start
       - name: Run tests
