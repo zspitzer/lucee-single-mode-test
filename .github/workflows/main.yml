@@ -38,10 +38,10 @@ jobs:
           fi
           ls -lH *.run
 
-          if [ ! -f "${{ env.LUCEE_CORE }}.lco" ]; then
-            curl --fail https://cdn.lucee.org/${{ env.LUCEE_CORE }}.lco -o ${{ env.LUCEE_CORE }}.lco -s
+          if [ ! -f "lucee-${{ env.LUCEE_CORE }}.jar" ]; then
+            curl --fail https://cdn.lucee.org/lucee-${{ env.LUCEE_CORE }}.jar -o lucee-${{ env.LUCEE_CORE }}.jar -s
           fi
-          ls -lH *.lco
+          ls -lH *.jar
 
       - name: Update and install Apache
         run: |
@@ -95,7 +95,9 @@ jobs:
         run: |
           sudo systemctl reload apache2
           sudo /opt/lucee/lucee_ctl stop
-          cp ${{ env.LUCEE_CORE }}.lco /opt/lucee/tomcat/lucee-server/deploy/${{ env.LUCEE_CORE }}.lco
+          # replace loader jar, allows testing 6 and 7
+          rm /opt/lucee/lib/lucee-${{ env.LUCEE_INSTALLER_VERSION }}.jar
+          cp ${{ env.LUCEE_CORE }}.lco /opt/lucee/lib/lucee-${{ env.LUCEE_CORE }}.jar
           cp conf/.CFConfig.json /opt/lucee/tomcat/lucee-server/deploy/.CFConfig.json
           sudo /opt/lucee/lucee_ctl start
       - name: Run tests
