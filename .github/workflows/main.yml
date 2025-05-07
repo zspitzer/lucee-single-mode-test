@@ -83,7 +83,7 @@ jobs:
         run: |
           sudo systemctl reload apache2
           sudo /opt/lucee/lucee_ctl stop
-          curl --fail https://cdn.lucee.org/lucee-${{ env.LUCEE_CORE }}.lco -o /opt/lucee/tomcat/lucee-server/deploy/lucee-${{ env.LUCEE_CORE }}.lco -s
+          sudo curl --fail https://cdn.lucee.org/lucee-${{ env.LUCEE_CORE }}.lco -o /opt/lucee/tomcat/lucee-server/deploy/lucee-${{ env.LUCEE_CORE }}.lco -s
           cp conf/.CFConfig.json /opt/lucee/tomcat/lucee-server/deploy/.CFConfig.json
           sudo /opt/lucee/lucee_ctl start
 
