@@ -2,7 +2,13 @@
 
     function logger( mess ){
         ArrayAppend( info, mess );
-        WriteLog( text=mess, type="INFO", log="application" );
+        if ( isSimpleValue(mess) ) {
+            WriteLog( text=mess, type="INFO", log="application" );
+        } else {
+            for (var m in mess) {
+                WriteLog( text=m.toJson(), type="INFO", log="application" );
+            }
+        }
     }
 
 
