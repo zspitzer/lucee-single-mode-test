@@ -48,10 +48,14 @@
 
     for (i in info){
         systemOutput(i, true);
-        if ( isSimpleValue(i) and i contains "two" ){
-            echo("<span style='color:red'>#i#</span><br>");
+        if ( isSimpleValue(i) ){
+            if ( i contains "two" ){
+                echo(":x: #i#<br>#chr(10)#");
+            else 
+                echo("#i#<br>#chr(10)#");
+        }   
         } else {
-            echo(serializeJson(i)  & "<br>");
+            echo(serializeJson(i)  & "<br>#chr(10)#");
         }
     }
 
@@ -63,7 +67,7 @@
     componentCache = componentCacheList();
     loop collection="#componentCache#" key="k" value="v" {
         systemOutput("#k#: #v# <br>", true);
-        echo("#k#: #v# <br>");
+        echo("#k#: #v# <br>#chr(10)#");
     }
 
 </cfscript>
