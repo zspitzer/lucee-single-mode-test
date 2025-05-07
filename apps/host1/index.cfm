@@ -6,8 +6,23 @@
 
     ArrayAppend(info, "--model.test" );
     ArrayAppend(info, new model.test().hello());
+
+    ArrayAppend(info, "--createObject(model.test)" );
+    ArrayAppend(info, createObject("model.test").hello());
+
+    ArrayAppend(info, "--createObject(/model/test)" );
+    ArrayAppend(info, createObject("/model/test").hello());
+
+
     ArrayAppend(info, "--mapModel.test");
     ArrayAppend(info, new mapModel.test().hello());
+
+    ArrayAppend(info, "--createObject(mapModel.test)" );
+    ArrayAppend(info, createObject("mapModel.test").hello());
+
+    ArrayAppend(info, "--createObject(/mapModel/test)" );
+    ArrayAppend(info, createObject("/mapModel/test").hello());
+
 
     for (i in info){
         systemOutput(i, true);
