@@ -1,11 +1,15 @@
 <cfscript>
-    if ( isSimpleValue(mess) ) {
-        WriteLog( text=mess, type="INFO", log="application" );
-    } else {
-        for (var m in mess) {
-            WriteLog( text=m.toJson(), type="INFO", log="application" );
+    function logger( mess ){
+        ArrayAppend( info, mess );
+        if ( isSimpleValue(mess) ) {
+            WriteLog( text=mess, type="INFO", log="application" );
+        } else {
+            for (var m in mess) {
+                WriteLog( text=m.toJson(), type="INFO", log="application" );
+            }
         }
     }
+    
     info = [];
     logger(cgi.request_url);
     logger(getApplicationSettings().name);
