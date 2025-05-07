@@ -24,7 +24,7 @@ jobs:
           path: lucee-${{ env.LUCEE_INSTALLER_VERSION }}-linux-x64-installer.run
           key: lucee-installer-cache
 
-      - name: Download Lucee Jar
+      - name: Download Lucee Installer
         run: |
           if [ ! -f "lucee-${{ env.LUCEE_INSTALLER_VERSION }}-linux-x64-installer.run" ]; then
             curl --fail https://cdn.lucee.org/lucee-${{ env.LUCEE_INSTALLER_VERSION }}-linux-x64-installer.run -o lucee-${{ env.LUCEE_INSTALLER_VERSION }}-linux-x64-installer.run -s
@@ -83,7 +83,7 @@ jobs:
         run: |
           sudo systemctl reload apache2
           sudo /opt/lucee/lucee_ctl stop
-          sudo curl --fail https://cdn.lucee.org/lucee-${{ env.LUCEE_CORE }}.lco -o /opt/lucee/tomcat/lucee-server/deploy/lucee-${{ env.LUCEE_CORE }}.lco -s
+          sudo curl --fail https://cdn.lucee.org/${{ env.LUCEE_CORE }}.lco -o /opt/lucee/tomcat/lucee-server/deploy/${{ env.LUCEE_CORE }}.lco -s
           cp conf/.CFConfig.json /opt/lucee/tomcat/lucee-server/deploy/.CFConfig.json
           sudo /opt/lucee/lucee_ctl start
 
