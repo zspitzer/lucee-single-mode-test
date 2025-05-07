@@ -52,7 +52,7 @@
     for (i in info){
         systemOutput(i, true);
         if ( isSimpleValue(i) and i contains "one" ){
-            echo("<span style='color:red'>#serializeJson(i)  & "</span><br>");
+            echo("<span style='color:red'>#i#</span><br>");
         } else {
             echo(serializeJson(i)  & "<br>");
         }
