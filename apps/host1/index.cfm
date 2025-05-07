@@ -60,9 +60,9 @@
     }
 
     systemOutput("", true);
-    echo("<hr>");
+    echo("<hr>#chr(10)##chr(10)#");
     systemOutput("#### componentCacheList()", true);
-    echo("#### componentCacheList()#chr(10)#");
+    echo("#### componentCacheList()#chr(10)##chr(10)#");
 
     componentCache = componentCacheList();
     loop collection="#componentCache#" key="k" value="v" {
