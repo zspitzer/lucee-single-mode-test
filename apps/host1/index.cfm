@@ -3,8 +3,7 @@
         ArrayAppend( info, mess );
         if ( isSimpleValue(mess) ) {
             WriteLog( text=mess, type="INFO", log="application" );
-            if ( mess contains "two" )
-                throw "CFC from two on host1";
+//            if ( mess contains "two" )                 throw "CFC from two on host1";
         } else {
             for (var m in mess) {
                 WriteLog( text=m.toJson(), type="INFO", log="application" );
@@ -37,8 +36,8 @@
     logger("--createObject(/mapModel/test)" );
     logger(createObject("/mapModel/test").hello());
 
-    logger("--componentMapping.test");
-    logger(new componentMapping.test().hello());
+    //logger("--componentMapping.test");
+    //logger(new componentMapping.test().hello());
 
     logger("--createObject(componentMapping.test)" );
     logger(createObject("componentMapping.test").hello());
