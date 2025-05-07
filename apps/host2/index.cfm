@@ -37,14 +37,14 @@
     logger("--createObject(/mapModel/test)" );
     logger(createObject("/mapModel/test").hello());
 
-    //logger("--componentMapping.test");
-    //logger(new componentMapping.test().hello());
+    logger("--new host2()");
+    logger(new host2().hello());
 
-    logger("--createObject(componentMapping.test)" );
-    logger(createObject("componentMapping.test").hello());
+    logger("--createObject(host2)" );
+    logger(createObject("host2").hello());
 
-    logger("--createObject(/componentMapping/test)" );
-    logger(createObject("/componentMapping/test").hello());
+    //logger("--createObject(/componentMapping/test)" );
+   // logger(createObject("/componentMapping/test").hello());
 
     for (i in info){
         systemOutput(i, true);
