@@ -30,7 +30,7 @@
 
     // via implicit root mapping
     logger("--new " );
-    logger(new ().hello());
+    logger(new baseMapping.baseMapping().hello());
 
     logger("--createObject()" );
     logger(createObject("baseMapping.baseMapping").hello());
