@@ -7,3 +7,7 @@ It does the following via Github Actions
 - Installs lucee using the ubuntu x64 installer
 - Set up Apache with two nearly identical virtual hosts
 - calls each virtual host and dumps the output
+
+Developed to triage this bug
+
+https://luceeserver.atlassian.net/browse/LDEV-5536
