@@ -15,6 +15,7 @@
     info = [];
     logger(cgi.request_url);
     logger(getApplicationSettings().name);
+    logger("------------mappings-----------------");
     logger(getApplicationSettings().mappings);
 
     logger("--model.test" );

@@ -129,7 +129,7 @@ jobs:
           sudo /opt/lucee/lucee_ctl restart
 
       - name: Run tests (reverse order, after restart)
-        run: |      
+        run: |
           echo "## Post restart, test if each host has it's own config and loads the correct models" | tee -a $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
@@ -169,15 +169,22 @@ jobs:
             echo ""
             echo "----- catalina.out"
             sudo [ -r /opt/lucee/tomcat/logs/catalina.out ] && sudo cat /opt/lucee/tomcat/logs/catalina.out
+
             echo ""
             echo ""
             echo "----- out.log"
             cat /opt/lucee/tomcat/lucee-server/context/logs/out.log
+
             echo ""
             echo ""
-            
             echo "----- deploy.log"
             cat /opt/lucee/tomcat/lucee-server/context/logs/deploy.log
+
+            echo ""
+            echo ""
+            echo "----- exception.log"
+            cat /opt/lucee/tomcat/lucee-server/context/logs/exception.log
+
             echo ""
             echo ""
             echo "----- application.log"
