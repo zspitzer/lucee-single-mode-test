@@ -52,13 +52,15 @@
     for (i in info){
         systemOutput(i, true);
         if ( isSimpleValue(i) ){
-            if ( i contains "one" ){
+            if ( i contains "testone" )
                 echo(":x: #i#<br>#chr(10)#");
-            } else {
+            else 
                 echo("#i#<br>#chr(10)#");
-            }
         } else {
-            echo(serializeJson(i)  & "<br>#chr(10)#");
+            if ( serializeJson(i) contains "testone" )
+                echo(":x: #serializeJson(i)#<br>#chr(10)#");
+            else 
+                echo("#serializeJson(i)#<br>#chr(10)#");
         }
     }
 
