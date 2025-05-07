@@ -19,32 +19,34 @@
     logger("------------mappings-----------------");
     logger(getApplicationSettings().mappings);
     logger(" " );
-    logger("--model.test" );
-    logger(new model.test().hello());
 
-    logger("--createObject(model.test)" );
-    logger(createObject("model.test").hello());
 
-    logger("--createObject(/model/test)" );
-    logger(createObject("/model/test").hello());
+    // via application.cfc mapping
+    logger("--new regular.regularMapping" );
+    logger(new regular.regularMapping().hello());
 
-    logger("--mapModel.test");
-    logger(new mapModel.test().hello());
+    logger("--createObject(regular.regularMapping)" );
+    logger(createObject("regular.regularMapping").hello());
 
-    logger("--createObject(mapModel.test)" );
-    logger(createObject("mapModel.test").hello());
+    logger("--createObject(/regular/regularMapping)" );
+    logger(createObject("/regular/regularMapping").hello());
 
-    logger("--createObject(/mapModel/test)" );
-    logger(createObject("/mapModel/test").hello());
+    // via implicit root mapping
+    logger("--new " );
+    logger(new ().hello());
 
-    logger("--new host2()");
-    logger(new host2().hello());
+    logger("--createObject()" );
+    logger(createObject("baseMapping.baseMapping").hello());
 
-    logger("--createObject(host2)" );
-    logger(createObject("host2").hello());
+    logger("--createObject(/baseMapping/baseMapping)" );
+    logger(createObject("/baseMapping/baseMapping").hello());
 
-    //logger("--createObject(/componentMapping/test)" );
-   // logger(createObject("/componentMapping/test").hello());
+    // via componentPaths
+    logger("--new componentMapping" );
+    logger(new componentMapping().hello());
+
+    logger("--createObject(componentMapping)" );
+    logger(createObject("componentMapping").hello());
 
     for (i in info){
         systemOutput(i, true);

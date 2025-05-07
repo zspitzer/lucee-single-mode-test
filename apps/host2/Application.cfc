@@ -1,8 +1,8 @@
 component {
 	this.name="two";
-	this.mappings["/mapModel"] = getDirectoryFromPath(getCurrentTemplatePath()) & "model";
+	this.mappings["/regular"] = getDirectoryFromPath(getCurrentTemplatePath()) & "regularMapping";
 
 	this.componentPaths = [
-		getDirectoryFromPath(getCurrentTemplatePath()) & "model"
+		getDirectoryFromPath(getCurrentTemplatePath()) & "compMapping"
 	];
 }
