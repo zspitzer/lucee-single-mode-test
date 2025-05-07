@@ -16,10 +16,10 @@
 
     info = [];
     logger(cgi.request_url);
-    logger(getApplicationSettings().name);
+    logger("ApplicationName: " & getApplicationSettings().name);
     logger("------------mappings-----------------");
     logger(getApplicationSettings().mappings);
-
+    logger(" " );
     logger("--model.test" );
     logger(new model.test().hello());
 
