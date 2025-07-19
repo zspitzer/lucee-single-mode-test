@@ -14,3 +14,7 @@
         echo(serializeJson(i)  & "<br>");
     }
 </cfscript>
+
+<cfif !structKeyExists(cookie, "explain")>
+	<cflog log="application" type="error" text="Missing explain cookie: #cookie.toJson()#">
+</cfif>
