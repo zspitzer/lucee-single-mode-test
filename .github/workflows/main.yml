@@ -13,7 +13,7 @@ on:
 
 env:
   LUCEE_INSTALLER_VERSION: 6.2.1.122
-  PUSH_LUCEE_TEST_VERSION: 6.2.2.9-SNAPSHOT
+  PUSH_LUCEE_TEST_VERSION: 6.2.2.76-SNAPSHOT
   LUCEE_CORE:  ${{ github.event.inputs.LUCEE_CORE_VERSION }}
 jobs:
   test-ubuntu-linux-x64:
@@ -68,9 +68,11 @@ jobs:
           sudo chmod -R g+rw,o+r /var/www/apps
 
           sudo cp conf/host1.localhost.conf /etc/apache2/sites-available/host1.localhost.conf
+          sudo cp conf/host1alias.localhost.conf /etc/apache2/sites-available/host1alias.localhost.conf
           sudo cp conf/host2.localhost.conf /etc/apache2/sites-available/host2.localhost.conf
 
           sudo a2ensite host1.localhost.conf
+          sudo a2ensite host1alias.localhost.conf
           sudo a2ensite host2.localhost.conf
 
           sudo systemctl reload apache2
@@ -126,7 +128,12 @@ jobs:
           curl -L --max-redirs 5 --retry-delay 5 http://host1.localhost/index.cfm --fail-with-body | tee -a $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
-          echo "ping the second host to create the second context" | tee -a $GITHUB_STEP_SUMMARY
+          echo "ping the alias host to create the host1 alias context" | tee -a $GITHUB_STEP_SUMMARY
+          curl -L --max-redirs 5 --retry-delay 5 http://host1alias.localhost/index.cfm
+          echo "sleeping 3s to allow mod_cfml to do it's magic (i.e. creating the new host context)" | tee -a $GITHUB_STEP_SUMMARY
+          sleep 3;
+
+          echo "ping the second host to create the third context" | tee -a $GITHUB_STEP_SUMMARY
           curl -L --max-redirs 5 --retry-delay 5 http://host2.localhost/index.cfm
           echo "sleeping 3s to allow mod_cfml to do it's magic (i.e. creating the new host context)" | tee -a $GITHUB_STEP_SUMMARY
           sleep 3;
@@ -159,6 +166,24 @@ jobs:
           echo "### http://host1.localhost/index.cfm" | tee -a $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           curl -L --max-redirs 5 --retry-delay 5 http://host1.localhost/index.cfm --fail-with-body | tee -a $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+      - name: Run Alias Tests (same webroot, different host names)
+        run: |
+          echo "ping the first alias host to create the context" | tee -a $GITHUB_STEP_SUMMARY
+          curl -L --max-redirs 5 --retry-delay 5 http://host1alias.localhost/index.cfm
+          echo "sleeping 3s to allow mod_cfml to do it's magic (i.e. creating the new host context)" | tee -a $GITHUB_STEP_SUMMARY
+          sleep 3;
+
+          echo "# Testing cfcache web context isolation in single mode" | tee -a $GITHUB_STEP_SUMMARY
+
+          echo "### http://host1.localhost/cache.cfm CACHE" | tee -a $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          curl -L --max-redirs 5 --retry-delay 5 http://host1.localhost/cache.cfm --fail-with-body | tee -a $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          echo "### http://host1alias.localhost/cache.cfm CACHE" | tee -a $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          curl -L --max-redirs 5 --retry-delay 5 http://host1alias.localhost/cache.cfm --fail-with-body | tee -a $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
       - name: Lucee Install logs
