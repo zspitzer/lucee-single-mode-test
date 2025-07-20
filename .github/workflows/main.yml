@@ -186,6 +186,11 @@ jobs:
           curl -L --max-redirs 5 --retry-delay 5 http://host1alias.localhost/cache.cfm --fail-with-body | tee -a $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
+          echo "### http://host2.localhost/cache.cfm CACHE" | tee -a $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          curl -L --max-redirs 5 --retry-delay 5 http://host2.localhost/cache.cfm --fail-with-body | tee -a $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
       - name: Lucee Install logs
         if: ${{ always() }}
         run: |
