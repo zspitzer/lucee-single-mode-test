@@ -1,13 +1,16 @@
 <cfoutput>
-	rendered at #now()#.<br/>
-	#cgi.request_url#<br/>
-	#expandPath("{web-root-directory}")#<br>
+	rendered at #now()#.
+	#cgi.request_url#
+	WebRoot: #expandPath("{web-root-directory}")#
+	WebContextHash: #expandPath("{web-context-hash}")#
+	ContextId: #getPageContext().getConfig().getIdentification().getId()#
 </cfoutput>
 <cfcache>
 	<cfoutput>
-		cached at #now()#.<br/>
-		#cgi.request_url#<br/>
-		#expandPath("{web-root-directory}")#<br>
+		cached at #now()#.
+		#cgi.request_url#
+		WebRoot: #expandPath("{web-root-directory}")#
+		WebContextHash: #expandPath("{web-context-hash}")#
+		ContextId: #getPageContext().getConfig().getIdentification().getId()#
 	</cfoutput>
 </cfcache>
-
