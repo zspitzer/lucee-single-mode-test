@@ -261,12 +261,12 @@ jobs:
       - name: Dump catalina config files
         if: ${{ always() }} # Ensure this runs even if previous steps fail, for debugging
         run: |
-          echo "Listing files under /opt/lucee/tomcat/conf/catalina/"
-          sudo ls -lR /opt/lucee/tomcat/conf/catalina/
+          echo "Listing files under /opt/lucee/tomcat/conf/Catalina/"
+          sudo ls -lR /opt/lucee/tomcat/conf/Catalina/
           echo ""
-          echo "Dumping content of each file in /opt/lucee/tomcat/conf/catalina/"
+          echo "Dumping content of each file in /opt/lucee/tomcat/conf/Catalina/"
           # Loop through each file found by `find` and print its content
-          find /opt/lucee/tomcat/conf/catalina/ -type f -print0 | while IFS= read -r -d $'\0' file; do
+          find /opt/lucee/tomcat/conf/Catalina/ -type f -print0 | while IFS= read -r -d $'\0' file; do
             echo "--- Content of $file ---"
             sudo cat "$file"
             echo ""
