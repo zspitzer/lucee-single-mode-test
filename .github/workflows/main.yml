@@ -9,11 +9,11 @@ on:
         required: true
         description: Lucee Version
         type: string
-        default: 6.2.2.9-SNAPSHOT
+        default: 6.2.2.85-SNAPSHOT
 
 env:
   LUCEE_INSTALLER_VERSION: 6.2.1.122
-  PUSH_LUCEE_TEST_VERSION: 6.2.2.76-SNAPSHOT
+  PUSH_LUCEE_TEST_VERSION: 6.2.2.85-SNAPSHOT
   LUCEE_CORE:  ${{ github.event.inputs.LUCEE_CORE_VERSION }}
 jobs:
   test-ubuntu-linux-x64:
