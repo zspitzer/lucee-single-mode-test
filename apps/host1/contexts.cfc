@@ -32,7 +32,7 @@ component {
 			arrayAppend(contexts, {
 				host = host,
 				path = path,
-				docBase = docBase, 
+			//	docBase = docBase, 
 				objectName = objectName.toString()
 			});
 		}
