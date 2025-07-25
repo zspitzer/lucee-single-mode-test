@@ -38,4 +38,18 @@ component {
 		}
 		return contexts;
 	}
+
+	function getFactories(){
+		var pc= getPageContext();
+		var _factories = pc.getConfig().getEngine().getCFMLFactories();
+		var factories = [];
+		for (var f in _factories){
+			var cfg = _factories[f].getConfig();
+			arrayAppend(factories, {
+				host = cfg.getServletContext().getVirtualServerName(),
+				root = cfg.getRootDirectory()
+			});
+		}
+		return factories;
+	}
 }
