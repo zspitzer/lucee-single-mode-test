@@ -258,4 +258,17 @@ jobs:
             echo "----- host2-error.log"
             sudo [ -r /var/log/apache2/host2-error.log ] && sudo cat /var/log/apache2/host2-error.log
 
+      - name: Dump catalina config files
+        if: ${{ always() }} # Ensure this runs even if previous steps fail, for debugging
+        run: |
+          echo "Listing files under /opt/lucee/tomcat/conf/catalina/"
+          sudo ls -lR /opt/lucee/tomcat/conf/catalina/
+          echo ""
+          echo "Dumping content of each file in /opt/lucee/tomcat/conf/catalina/"
+          # Loop through each file found by `find` and print its content
+          find /opt/lucee/tomcat/conf/catalina/ -type f -print0 | while IFS= read -r -d $'\0' file; do
+            echo "--- Content of $file ---"
+            sudo cat "$file"
+            echo ""
+          done
 
