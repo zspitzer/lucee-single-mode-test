@@ -8,5 +8,6 @@
 			"level": "trace",
 			"layout": "classic"
 		}
-	}
+	},
+	 "mode": "multi"
 }
