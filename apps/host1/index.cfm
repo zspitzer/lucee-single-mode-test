@@ -45,18 +45,22 @@
 
     logger("--createObject(componentMapping)" );
     logger(createObject("componentMapping").hello());
+</cfscript>
 
+<cfinclude template="file-access-test.cfm">
+
+<cfscript>
     for (i in info){
         systemOutput(i, true);
         if ( isSimpleValue(i) ){
             if ( i contains "testtwo" )
                 echo(":x: #i##chr(10)#");
-            else 
+            else
                 echo("#i##chr(10)#");
         } else {
             if ( serializeJson(i) contains "testtwo" )
                 echo(":x: #serializeJson(i)##chr(10)#");
-            else 
+            else
                 echo("#serializeJson(i)##chr(10)#");
         }
     }
@@ -70,6 +74,11 @@
     loop collection="#componentCache#" key="k" value="v" {
         systemOutput("#k#: #v# <br>", true);
         echo("#k#: #v# <br>#chr(10)#");
+    }
+
+    // Fail the request if file access security tests failed
+    if ( isDefined( "testsFailed" ) && testsFailed > 0 ) {
+        header statusCode=500 statusText="File Access Security Tests Failed";
     }
 
 </cfscript>
