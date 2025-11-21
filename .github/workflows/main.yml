@@ -9,11 +9,20 @@ on:
         required: true
         description: Lucee Version
         type: string
-        default: 6.2.2.85-SNAPSHOT
+        default: 6.2.3.35
+      FILE_ACCESS_MODE:
+        required: false
+        description: File access security mode
+        type: choice
+        options:
+          - all
+          - local
+          - none
+        default: all
 
 env:
-  LUCEE_INSTALLER_VERSION: 6.2.1.122
-  PUSH_LUCEE_TEST_VERSION: 6.2.2.85-SNAPSHOT
+  LUCEE_INSTALLER_VERSION: 6.2.3.35
+  PUSH_LUCEE_TEST_VERSION: 6.2.3.35
   LUCEE_CORE:  ${{ github.event.inputs.LUCEE_CORE_VERSION }}
 jobs:
   test-ubuntu-linux-x64:
@@ -100,10 +109,20 @@ jobs:
           # replace loader jar, allows testing 6 and 7
           sudo rm /opt/lucee/lib/lucee-${{ env.LUCEE_INSTALLER_VERSION }}.jar
           sudo cp lucee-${{ env.LUCEE_CORE }}.jar /opt/lucee/lib/lucee-${{ env.LUCEE_CORE }}.jar
-          cp conf/.CFConfig.json /opt/lucee/tomcat/lucee-server/deploy/.CFConfig.json
+
+          # Inject file access mode into CFConfig
+          FILE_ACCESS_MODE="${{ github.event.inputs.FILE_ACCESS_MODE || 'all' }}"
+          jq ".security.file = \"$FILE_ACCESS_MODE\"" conf/.CFConfig.json > /tmp/.CFConfig.json
+          sudo cp /tmp/.CFConfig.json /opt/lucee/tomcat/lucee-server/deploy/.CFConfig.json
+          echo "Configured file access mode: $FILE_ACCESS_MODE"
+          cat /opt/lucee/tomcat/lucee-server/deploy/.CFConfig.json
+
           sudo /opt/lucee/lucee_ctl start
       - name: Run tests
         run: |
+          echo "## File Access Mode: ${{ github.event.inputs.FILE_ACCESS_MODE || 'all' }}" | tee -a $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
           echo "Sanity Check Tomcat port 8888 (post restart)" | tee -a $GITHUB_STEP_SUMMARY
           curl http://127.0.0.1:8888/check.cfm?version=${{ env.LUCEE_CORE }} --fail-with-body >> $GITHUB_STEP_SUMMARY
 
@@ -125,8 +144,18 @@ jobs:
 
           echo "### http://host1.localhost/index.cfm" | tee -a $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          curl -L --max-redirs 5 --retry-delay 5 http://host1.localhost/index.cfm --fail-with-body | tee -a $GITHUB_STEP_SUMMARY
+
+          # Capture response and status code
+          HTTP_STATUS=$(curl -L --max-redirs 5 --retry-delay 5 -w "%{http_code}" -o /tmp/host1-response.txt http://host1.localhost/index.cfm)
+          cat /tmp/host1-response.txt | tee -a $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
+          echo "HTTP Status: $HTTP_STATUS" | tee -a $GITHUB_STEP_SUMMARY
+
+          # Fail if HTTP status is not 200
+          if [ "$HTTP_STATUS" != "200" ]; then
+            echo "ERROR: Expected HTTP 200, got $HTTP_STATUS" | tee -a $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
 
           echo "ping the alias host to create the host1 alias context" | tee -a $GITHUB_STEP_SUMMARY
           curl -L --max-redirs 5 --retry-delay 5 http://host1alias.localhost/index.cfm
@@ -155,8 +184,18 @@ jobs:
 
           echo "### http://host2.localhost/index.cfm" | tee -a $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          curl -L --max-redirs 5 --retry-delay 5 http://host2.localhost/index.cfm --fail-with-body | tee -a $GITHUB_STEP_SUMMARY
+
+          # Capture response and status code
+          HTTP_STATUS=$(curl -L --max-redirs 5 --retry-delay 5 -w "%{http_code}" -o /tmp/host2-restart-response.txt http://host2.localhost/index.cfm)
+          cat /tmp/host2-restart-response.txt | tee -a $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
+          echo "HTTP Status: $HTTP_STATUS" | tee -a $GITHUB_STEP_SUMMARY
+
+          # Fail if HTTP status is not 200
+          if [ "$HTTP_STATUS" != "200" ]; then
+            echo "ERROR: Expected HTTP 200, got $HTTP_STATUS" | tee -a $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
 
           echo "ping the first host to create the context" | tee -a $GITHUB_STEP_SUMMARY
           curl -L --max-redirs 5 --retry-delay 5 http://host1.localhost/index.cfm
@@ -165,8 +204,18 @@ jobs:
 
           echo "### http://host1.localhost/index.cfm" | tee -a $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          curl -L --max-redirs 5 --retry-delay 5 http://host1.localhost/index.cfm --fail-with-body | tee -a $GITHUB_STEP_SUMMARY
+
+          # Capture response and status code
+          HTTP_STATUS=$(curl -L --max-redirs 5 --retry-delay 5 -w "%{http_code}" -o /tmp/host1-restart-response.txt http://host1.localhost/index.cfm)
+          cat /tmp/host1-restart-response.txt | tee -a $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
+          echo "HTTP Status: $HTTP_STATUS" | tee -a $GITHUB_STEP_SUMMARY
+
+          # Fail if HTTP status is not 200
+          if [ "$HTTP_STATUS" != "200" ]; then
+            echo "ERROR: Expected HTTP 200, got $HTTP_STATUS" | tee -a $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
       - name: Run Alias Tests (same webroot, different host names)
         run: |
           echo "ping the first alias host to create the context" | tee -a $GITHUB_STEP_SUMMARY
