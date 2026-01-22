@@ -53,10 +53,10 @@
 
 	try {
 		// Trigger config reload by toggling a setting
-		admin action="updateCompilerSettings"
+		admin action="updatepsq"
 			type="server"
 			password="#adminPassword#"
-			dotNotationUpperCase="true";
+			psq="true";
 
 		echo( "Config reload triggered via cfadmin#chr( 10 )#" );
 		systemOutput( "Config reload triggered via cfadmin", true );
@@ -81,6 +81,6 @@
 		header statusCode=500 statusText="Form Tags Extension Test Failed After Reload";
 	}
 
-	echo( "#chr( 10 )### All tests completed#chr( 10 )#" );
+	echo( "#chr( 10 )##### All tests completed#chr( 10 )#" );
 	systemOutput( "## All tests completed", true );
 </cfscript>
