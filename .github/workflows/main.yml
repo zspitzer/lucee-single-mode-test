@@ -9,7 +9,7 @@ on:
         required: true
         description: Lucee Version
         type: string
-        default: 6.2.3.35
+        default: 6.2.4.24
       FILE_ACCESS_MODE:
         required: false
         description: File access security mode
@@ -21,9 +21,11 @@ on:
         default: all
 
 env:
-  LUCEE_INSTALLER_VERSION: 6.2.3.35
-  PUSH_LUCEE_TEST_VERSION: 6.2.3.35
+  LUCEE_INSTALLER_VERSION: 6.2.4.24
+  PUSH_LUCEE_TEST_VERSION: 6.2.4.24
   LUCEE_CORE:  ${{ github.event.inputs.LUCEE_CORE_VERSION }}
+  # Form Tags extension for LDEV-5534 testing
+  LUCEE_EXTENSIONS: FAD67145-E3AE-30F8-1C11A6CCF544F0B7
 jobs:
   test-ubuntu-linux-x64:
     runs-on: ubuntu-latest
@@ -109,6 +111,9 @@ jobs:
           # replace loader jar, allows testing 6 and 7
           sudo rm /opt/lucee/lib/lucee-${{ env.LUCEE_INSTALLER_VERSION }}.jar
           sudo cp lucee-${{ env.LUCEE_CORE }}.jar /opt/lucee/lib/lucee-${{ env.LUCEE_CORE }}.jar
+
+          # Add LUCEE_EXTENSIONS to setenv.sh for Form Tags extension (LDEV-5534)
+          echo 'export LUCEE_EXTENSIONS="${{ env.LUCEE_EXTENSIONS }}"' | sudo tee -a /opt/lucee/tomcat/bin/setenv.sh
 
           # Inject file access mode into CFConfig
           FILE_ACCESS_MODE="${{ github.event.inputs.FILE_ACCESS_MODE || 'all' }}"
@@ -244,6 +249,59 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           curl -L --max-redirs 5 --retry-delay 5 http://host1.localhost/contexts.cfm --fail-with-body | tee -a $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
+
+      - name: Run Form Tags Extension Tests (LDEV-5534)
+        run: |
+          echo "# Testing Form Tags extension mapping in single mode - LDEV-5534" | tee -a $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          echo "### http://host1.localhost/formtag-test.cfm" | tee -a $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          HTTP_STATUS=$(curl -L --max-redirs 5 --retry-delay 5 -w "%{http_code}" -o /tmp/host1-formtag-response.txt http://host1.localhost/formtag-test.cfm)
+          cat /tmp/host1-formtag-response.txt | tee -a $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "HTTP Status: $HTTP_STATUS" | tee -a $GITHUB_STEP_SUMMARY
+
+          if [ "$HTTP_STATUS" != "200" ]; then
+            echo "ERROR: host1 formtag-test expected HTTP 200, got $HTTP_STATUS" | tee -a $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+
+          echo "### http://host2.localhost/formtag-test.cfm" | tee -a $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          HTTP_STATUS=$(curl -L --max-redirs 5 --retry-delay 5 -w "%{http_code}" -o /tmp/host2-formtag-response.txt http://host2.localhost/formtag-test.cfm)
+          cat /tmp/host2-formtag-response.txt | tee -a $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "HTTP Status: $HTTP_STATUS" | tee -a $GITHUB_STEP_SUMMARY
+
+          if [ "$HTTP_STATUS" != "200" ]; then
+            echo "ERROR: host2 formtag-test expected HTTP 200, got $HTTP_STATUS" | tee -a $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+
+          echo "### http://host1.localhost/cfform-test.cfm (actual cfform tag)" | tee -a $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          HTTP_STATUS=$(curl -L --max-redirs 5 --retry-delay 5 -w "%{http_code}" -o /tmp/host1-cfform-response.txt http://host1.localhost/cfform-test.cfm)
+          cat /tmp/host1-cfform-response.txt | tee -a $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "HTTP Status: $HTTP_STATUS" | tee -a $GITHUB_STEP_SUMMARY
+
+          if [ "$HTTP_STATUS" != "200" ]; then
+            echo "ERROR: host1 cfform-test expected HTTP 200, got $HTTP_STATUS" | tee -a $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+
+          echo "### http://host2.localhost/cfform-test.cfm (actual cfform tag)" | tee -a $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          HTTP_STATUS=$(curl -L --max-redirs 5 --retry-delay 5 -w "%{http_code}" -o /tmp/host2-cfform-response.txt http://host2.localhost/cfform-test.cfm)
+          cat /tmp/host2-cfform-response.txt | tee -a $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "HTTP Status: $HTTP_STATUS" | tee -a $GITHUB_STEP_SUMMARY
+
+          if [ "$HTTP_STATUS" != "200" ]; then
+            echo "ERROR: host2 cfform-test expected HTTP 200, got $HTTP_STATUS" | tee -a $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
 
       - name: Lucee Install logs
         if: ${{ always() }}
