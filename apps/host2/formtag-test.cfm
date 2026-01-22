@@ -48,8 +48,8 @@
 
 	// Test 2: After config reload (LDEV-6073)
 	// Trigger a config reload by updating a harmless setting
-	echo( "#chr( 10 )#### Test 2: After config reload (LDEV-6073)#chr( 10 )#" );
-	systemOutput( "### Test 2: After config reload (LDEV-6073)", true );
+	echo( "#chr( 10 )##### Test 2: After config reload (LDEV-6073)#chr( 10 )#" );
+	systemOutput( "#### Test 2: After config reload (LDEV-6073)", true );
 
 	try {
 		// Trigger config reload by toggling a setting
