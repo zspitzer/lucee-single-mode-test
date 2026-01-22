@@ -23,8 +23,8 @@
 	}
 
 	// Test 1: Initial access (LDEV-5534)
-	echo( "#chr( 10 )#### Test 1: Initial access (LDEV-5534)#chr( 10 )#" );
-	systemOutput( "### Test 1: Initial access (LDEV-5534)", true );
+	echo( "#chr( 10 )##### Test 1: Initial access (LDEV-5534)#chr( 10 )#" );
+	systemOutput( "#### Test 1: Initial access (LDEV-5534)", true );
 
 	try {
 		result = internalRequest( template="/lucee/formtag-form.cfm" );
