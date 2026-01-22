@@ -7,6 +7,7 @@ component {
 	];
 
 	function onError( required any exception, required string eventName ) {
+		cfheader( statusCode=500, statusText="Internal Server Error" );
 		cfheader( name="Content-Type", value="text/plain" );
 		writeOutput( "Error in #arguments.eventName#" & chr( 10 ) & chr( 10 ) );
 		writeOutput( "Message: #arguments.exception.message#" & chr( 10 ) );
