@@ -9,7 +9,7 @@ on:
         required: true
         description: Lucee Version
         type: string
-        default: 6.2.4.24
+        default: 6.2.6.19-RC
       FILE_ACCESS_MODE:
         required: false
         description: File access security mode
@@ -21,8 +21,8 @@ on:
         default: all
 
 env:
-  LUCEE_INSTALLER_VERSION: 6.2.4.24
-  PUSH_LUCEE_TEST_VERSION: 6.2.4.24
+  LUCEE_INSTALLER_VERSION: 6.2.6.19-RC
+  PUSH_LUCEE_TEST_VERSION: 6.2.6.19-RC
   LUCEE_CORE:  ${{ github.event.inputs.LUCEE_CORE_VERSION }}
   # Form Tags extension for LDEV-5534 testing
   # WebSocket extension + WebSocket Client extension for LDEV-6223 testing
