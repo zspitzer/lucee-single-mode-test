@@ -62,7 +62,7 @@ jobs:
 
       - name: Enable Apache modules
         run: |
-          sudo a2enmod proxy proxy_wstunnel
+          sudo a2enmod proxy proxy_http proxy_wstunnel
 
       - name: Start Apache service
         run: |
