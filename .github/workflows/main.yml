@@ -19,6 +19,11 @@ on:
           - local
           - none
         default: all
+      WEBSOCKET_WARMUP:
+        required: false
+        description: Call websocketInfo() before WS test (workaround for LDEV-6223)
+        type: boolean
+        default: false
 
 env:
   LUCEE_INSTALLER_VERSION: 6.2.6.19-RC
@@ -321,7 +326,16 @@ jobs:
         run: |
           echo "# Testing WebSocket multi-context init ordering - LDEV-6223" | tee -a $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "NOTE: These tests do NOT call websocketInfo() first — they validate cold-start init" | tee -a $GITHUB_STEP_SUMMARY
+
+          WARMUP="${{ github.event.inputs.WEBSOCKET_WARMUP || 'false' }}"
+          if [ "$WARMUP" = "true" ]; then
+            echo "**WEBSOCKET_WARMUP=true** — calling websocketInfo() on both hosts first" | tee -a $GITHUB_STEP_SUMMARY
+            curl -s http://host1.localhost/websocket-warmup.cfm | tee -a $GITHUB_STEP_SUMMARY
+            curl -s http://host2.localhost/websocket-warmup.cfm | tee -a $GITHUB_STEP_SUMMARY
+            sleep 2
+          else
+            echo "**WEBSOCKET_WARMUP=false** — cold-start test, no websocketInfo() warmup" | tee -a $GITHUB_STEP_SUMMARY
+          fi
           echo "" >> $GITHUB_STEP_SUMMARY
 
           echo "### http://host1.localhost/websocket-test.cfm" | tee -a $GITHUB_STEP_SUMMARY
