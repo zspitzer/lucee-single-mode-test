@@ -25,7 +25,8 @@ env:
   PUSH_LUCEE_TEST_VERSION: 6.2.4.24
   LUCEE_CORE:  ${{ github.event.inputs.LUCEE_CORE_VERSION }}
   # Form Tags extension for LDEV-5534 testing
-  LUCEE_EXTENSIONS: FAD67145-E3AE-30F8-1C11A6CCF544F0B7
+  # WebSocket extension + WebSocket Client extension for LDEV-6223 testing
+  LUCEE_EXTENSIONS: FAD67145-E3AE-30F8-1C11A6CCF544F0B7;3F9DFF32-B555-449D-B0EB5DB723044045;version=3.0.0.20-SNAPSHOT;058215B3-5544-4392-A187A1649EB5CA90;version=2.3.0.9-SNAPSHOT
 jobs:
   test-ubuntu-linux-x64:
     runs-on: ubuntu-latest
@@ -58,6 +59,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y apache2
+
+      - name: Enable Apache modules
+        run: |
+          sudo a2enmod proxy proxy_wstunnel
 
       - name: Start Apache service
         run: |
@@ -104,6 +109,14 @@ jobs:
         run: |
           sudo usermod -a -G www-data lucee
           sudo ls -lR /var/www/apps
+
+      - name: Install WebSocket listener (LDEV-6223)
+        run: |
+          sudo mkdir -p /opt/lucee/tomcat/lucee-server/context/websockets
+          sudo cp apps/websockets/*.cfc /opt/lucee/tomcat/lucee-server/context/websockets/
+          sudo chown -R lucee:lucee /opt/lucee/tomcat/lucee-server/context/websockets
+          echo "WebSocket listeners:"
+          ls -la /opt/lucee/tomcat/lucee-server/context/websockets/
 
       - name: Restart Lucee
         run: |
@@ -304,6 +317,37 @@ jobs:
             exit 1
           fi
 
+      - name: Run WebSocket Multi-Context Tests (LDEV-6223)
+        run: |
+          echo "# Testing WebSocket multi-context init ordering - LDEV-6223" | tee -a $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "NOTE: These tests do NOT call websocketInfo() first — they validate cold-start init" | tee -a $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          echo "### http://host1.localhost/websocket-test.cfm" | tee -a $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          HTTP_STATUS=$(curl -L --max-redirs 5 --retry-delay 5 -w "%{http_code}" -o /tmp/host1-ws-response.txt http://host1.localhost/websocket-test.cfm)
+          cat /tmp/host1-ws-response.txt | tee -a $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "HTTP Status: $HTTP_STATUS" | tee -a $GITHUB_STEP_SUMMARY
+
+          if [ "$HTTP_STATUS" != "200" ]; then
+            echo "ERROR: host1 websocket-test expected HTTP 200, got $HTTP_STATUS" | tee -a $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+
+          echo "### http://host2.localhost/websocket-test.cfm" | tee -a $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          HTTP_STATUS=$(curl -L --max-redirs 5 --retry-delay 5 -w "%{http_code}" -o /tmp/host2-ws-response.txt http://host2.localhost/websocket-test.cfm)
+          cat /tmp/host2-ws-response.txt | tee -a $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "HTTP Status: $HTTP_STATUS" | tee -a $GITHUB_STEP_SUMMARY
+
+          if [ "$HTTP_STATUS" != "200" ]; then
+            echo "ERROR: host2 websocket-test expected HTTP 200, got $HTTP_STATUS" | tee -a $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+
       - name: Lucee Install logs
         if: ${{ always() }}
         run: |
@@ -345,6 +389,16 @@ jobs:
             echo ""
             echo "----- out.log"
             cat /opt/lucee/tomcat/lucee-server/context/logs/out.log
+
+            echo ""
+            echo ""
+            echo "----- websocket.log"
+            cat /opt/lucee/tomcat/lucee-server/context/logs/websocket.log 2>/dev/null || echo "Not found"
+
+            echo ""
+            echo ""
+            echo "----- websocket.json"
+            cat /opt/lucee/tomcat/lucee-server/context/websocket.json 2>/dev/null || echo "Not found"
 
       - name: List cfclasses
         if: ${{ always() }}
